@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Docsify + Prism + Mermaid + PlantUML</title>
+
+  <!-- Тема подсветки Prism -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/prism-ghcolors.min.css" />
+  <link
+    rel="stylesheet"
+    href="//cdn.jsdelivr.net/npm/docsify@4/themes/vue.css"
+  />
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    window.$docsify = {
+      name: '',
+      routerMode: 'hash',
+      executeScript: true,
+      plugins: [
+        function (hook, vm) {
+          hook.doneEach(function () {
+            if (window.Prism && window.Prism.highlightAll) {
+              window.Prism.highlightAll();
+            }
+
+            const h1 = document.querySelector('.content h1, #main h1, h1, .content h2, #main h2, h2, .content h3, #main h3, h3');
+            const pageTitle = h1 ? h1.textContent.trim() : '';
+            const siteName = 'статьи @fromidiottojunior';
+            document.title = pageTitle ? `${pageTitle} — ${siteName}` : siteName;
+          });
+        }
+      ]
+    };
+  </script>
+
+  <!-- Docsify -->
+  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+
+  <script src="//cdn.jsdelivr.net/npm/@sujaykumarh/docsify-plugin-title@2.x/dist/plugin.min.js"></script>
+
+  <!-- Mermaid -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-mermaid/dist/docsify-mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true });</script>
+
+  <!-- PlantUML через Kroki -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify-kroki/dist/docsify-kroki.min.js"></script>
+  <script>
+    window.$docsify.kroki = { target: 'https://kroki.io', enableTranscoder: true };
+  </script>
+
+  <!-- Prism core -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+  <!-- ВАЖНО: зависимости в правильном порядке -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-markup.min.js"></script>            <!-- XML/HTML -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-clike.min.js"></script>             <!-- зависимость для PHP -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-markup-templating.min.js"></script> <!-- ОБЯЗАТЕЛЬНО для PHP -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-php.min.js"></script>
+
+  <!-- Остальные языки -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-http.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-protobuf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-graphql.min.js"></script>
+</body>
+</html>
