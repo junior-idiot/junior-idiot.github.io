@@ -12,6 +12,31 @@
     href="//cdn.jsdelivr.net/npm/docsify@4/themes/vue.css"
   />
 </head>
+
+<style>
+  /* базовые поджатия */
+  .markdown-section { max-width: 980px; margin: 0 auto; padding: 24px; }
+  /* мобильная компоновка */
+  @media (max-width: 600px) {
+    .markdown-section { padding: 10px 14px; }
+    .markdown-section h1 { font-size: 1.35rem; margin: .6em 0 .4em; }
+    .markdown-section h2 { font-size: 1.15rem; margin: .6em 0 .35em; }
+    .markdown-section pre { padding: 8px; }
+    .markdown-section pre code { font-size: 12px; line-height: 1.4; }
+    .markdown-section p, .markdown-section li { line-height: 1.5; }
+    img { border-radius: 6px; }
+  }
+  /* тонкая правка таблиц/картинок на мобилке */
+  .markdown-section table { display: block; overflow-x: auto; }
+  .markdown-section img { max-width: 100%; height: auto; }
+</style>
+
+<style>
+  .author-bar { display:flex; align-items:center; margin: 6px 0 14px; color:#888; }
+  .author-bar .author-meta { font-size: .9rem; }
+  .author-bar .dot { padding: 0 6px; }
+  @media (max-width: 600px) { .author-bar { margin: 2px 0 10px; } }
+</style>
 <body>
   <div id="app"></div>
 
@@ -27,8 +52,28 @@
               window.Prism.highlightAll();
             }
 
+            const meta = window.$docsify?.frontMatter || {};
+            const author = meta.author || '@fromidiottojunior';
+            const date = meta.date || new Date().toISOString().slice(0,10);
+            const host = document.querySelector('.markdown-section');
+            if (!host) return;
+
+            // очищаем предыдущую панель (если была)
+            host.querySelectorAll('.author-bar').forEach(n => n.remove());
+
+            const bar = document.createElement('div');
+            bar.className = 'author-bar';
+            bar.innerHTML = `
+              <div class="author-meta">
+                <span class="author-name">by ${author}</span>
+                <span class="dot">·</span>
+                <span class="author-date">${date}</span>
+              </div>
+            `;
+            //host.append(bar);
+
             const h1 = document.querySelector('.content h1, #main h1, h1, .content h2, #main h2, h2, .content h3, #main h3, h3');
-            const pageTitle = h1 ? h1.textContent.trim() : '';
+            const pageTitle = meta.title ? h1 ? h1.textContent.trim() : '' : '';
             const siteName = 'статьи @fromidiottojunior';
             document.title = pageTitle ? `${pageTitle} — ${siteName}` : siteName;
           });
@@ -41,6 +86,14 @@
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
 
   <script src="//cdn.jsdelivr.net/npm/@sujaykumarh/docsify-plugin-title@2.x/dist/plugin.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/front-matter.min.js"></script>
+  <!-- подключи после docsify.min.js -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+
+  <script src="//unpkg.com/js-yaml@3/dist/js-yaml.js"></script>
+  <script src="//unpkg.com/yaml-front-matter@4/dist/yamlFront.js"></script>
 
   <!-- Mermaid -->
   <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
