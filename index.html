@@ -7,6 +7,7 @@
 
   <!-- Тема подсветки Prism -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/prism-ghcolors.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@markbattistella/docsify-charty@latest/dist/docsify-charty.min.css">
   <link
     rel="stylesheet"
     href="//cdn.jsdelivr.net/npm/docsify@4/themes/vue.css"
@@ -42,7 +43,8 @@
 
   <script>
     window.$docsify = {
-      name: '',
+      name: 'все статьи',
+      nameLink: '#/',
       routerMode: 'hash',
       executeScript: true,
       plugins: [
@@ -77,6 +79,60 @@
             const siteName = 'статьи @fromidiottojunior';
             document.title = pageTitle ? `${pageTitle} — ${siteName}` : siteName;
           });
+        },
+        function (hook, vm) {
+          let pdfBtn;
+
+          function ensureBtn() {
+            if (pdfBtn && document.body.contains(pdfBtn)) return pdfBtn;
+            pdfBtn = document.createElement('a');
+            pdfBtn.id = 'download-pdf-btn';
+            pdfBtn.className = 'pdf-link';
+            pdfBtn.textContent = '⬇︎ Скачать PDF';
+            Object.assign(pdfBtn.style, {
+              position: 'fixed',
+              right: '16px',
+              bottom: '16px',
+              zIndex: 9999,
+              padding: '10px 14px',
+              border: 'none',
+              borderRadius: '10px',
+              boxShadow: '0 8px 20px rgba(0,0,0,.15)',
+              background: '#42b983',
+              color: '#fff',
+              fontWeight: '600',
+              textDecoration: 'none',
+              display: 'none'
+            });
+            document.body.appendChild(pdfBtn);
+            return pdfBtn;
+          }
+
+          async function updatePdfLink() {
+            const meta = window.$docsify?.frontMatter || {};
+            const host = document.querySelector('.markdown-section');
+            const btn = ensureBtn();
+            if (!host) { btn.style.display = 'none'; return; }
+            let href = (meta.pdf || '').trim();
+
+            if (!href) {
+              const file = vm.route.file || 'README.md';
+              const base = (window.$docsify.basePath || '').replace(/\/+$/, '');
+              href = `${base}/_pdf/${file.replace(/^docs\//,'').replace(/\.md$/i,'')}.pdf`;
+            }
+
+            try {
+              const res = await fetch(href, { method: 'HEAD', cache: 'no-store' });
+              if (!res.ok) throw new Error('404');
+              btn.href = href;
+              btn.download = '';
+              btn.style.display = '';
+            } catch {
+              btn.style.display = 'none';
+            }
+          }
+
+          hook.doneEach(updatePdfLink);
         }
       ]
     };
@@ -94,6 +150,9 @@
 
   <script src="//unpkg.com/js-yaml@3/dist/js-yaml.js"></script>
   <script src="//unpkg.com/yaml-front-matter@4/dist/yamlFront.js"></script>
+
+  <script src="https://unpkg.com/docsify-plugin-flexible-alerts"></script>
+  <script src="https://unpkg.com/@markbattistella/docsify-charty@latest/dist/docsify-charty.min.js"></script>
 
   <!-- Mermaid -->
   <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
